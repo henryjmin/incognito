@@ -3,17 +3,19 @@
 
 bool mainMenu();
 
+PadState pad;
+
 bool end()
 {
 	printf("Press + to exit\n");
 
 	while (appletMainLoop())
 	{
-		hidScanInput();
+		padUpdate(&pad);
 
-		u64 keys = hidKeysDown(CONTROLLER_P1_AUTO);
+		u64 keys = padGetButtonsDown(&pad);
 
-		if (keys & KEY_PLUS)
+		if (keys & HidNpadButton_Plus)
 		{
 			break;
 		}
@@ -30,16 +32,16 @@ bool confirm()
 
 	while (appletMainLoop())
 	{
-		hidScanInput();
+		padUpdate(&pad);
 
-		u64 keys = hidKeysDown(CONTROLLER_P1_AUTO);
+		u64 keys = padGetButtonsDown(&pad);
 
-		if (keys & KEY_PLUS || keys & KEY_B || keys & KEY_X || keys & KEY_Y)
+		if (keys & HidNpadButton_Plus || keys & HidNpadButton_B || keys & HidNpadButton_X || keys & HidNpadButton_Y)
 		{
 			return false;
 		}
 
-		if (keys & KEY_A)
+		if (keys & HidNpadButton_A)
 		{
 			return true;
 		}
@@ -137,31 +139,31 @@ bool mainMenu()
 
 	while (appletMainLoop())
 	{
-		hidScanInput();
+		padUpdate(&pad);
 
-		u64 keys = hidKeysDown(CONTROLLER_P1_AUTO);
+		u64 keys = padGetButtonsDown(&pad);
 
-		if (keys & KEY_A)
+		if (keys & HidNpadButton_A)
 		{
 			return install();
 		}
 		
-		if (keys & KEY_B)
+		if (keys & HidNpadButton_B)
 		{
 			return backup();
 		}
 
-		if (keys & KEY_Y)
+		if (keys & HidNpadButton_Y)
 		{
 			return restore();
 		}
 
-		if (keys & KEY_X)
+		if (keys & HidNpadButton_X)
 		{
 			return verify();
 		}
 
-		if (keys & KEY_PLUS)
+		if (keys & HidNpadButton_Plus)
 		{
 			break;
 		}
