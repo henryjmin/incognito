@@ -1,10 +1,9 @@
 # incognito
 Wipes some personal information from your Nintendo Switch by removing it from PRODINFO (CAL0).
 
-NOTE: Atmosphere blocks writes to PRODINFO, so you must use ReiNX, SX OS, or a custom KIP to install this. Once installed, you can switch back to Atmosphere.
-
 ## Purpose
 a) It enables your switch to go online while worrying slightly less about a ban.
+
 b) It prevents malicious homebrew applications from stealing your personal certificate.
 
 ## Disclaimers
