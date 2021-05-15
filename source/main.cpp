@@ -3,6 +3,7 @@
 
 bool mainMenu();
 
+
 PadState pad;
 
 bool end()
@@ -130,6 +131,9 @@ void printSerial()
 
 bool mainMenu()
 {
+	padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+	padInitializeDefault(&pad);
+
 	printf("\n\n-------- Main Menu --------\n");
 	printf("Press A to install incognito mode\n");
 	printf("Press B to backup prodinfo.bin only\n");
