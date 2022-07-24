@@ -3,7 +3,6 @@
 
 bool mainMenu();
 
-
 PadState pad;
 
 bool end()
@@ -57,9 +56,7 @@ bool backup()
 	Incognito incognito;
 	incognito.backup();
 	return end();
-	
 }
-
 
 bool install()
 {
@@ -151,7 +148,7 @@ bool mainMenu()
 		{
 			return install();
 		}
-		
+
 		if (keys & HidNpadButton_B)
 		{
 			return backup();
@@ -176,7 +173,6 @@ bool mainMenu()
 	return true;
 }
 
-
 int main(int argc, char **argv)
 {
 	fsInitialize();
@@ -185,7 +181,7 @@ int main(int argc, char **argv)
 	printSerial();
 
 	printf("Warning: This software was written by a not nice person.\n\n");
-	
+
 	mainMenu();
 
 	consoleExit(NULL);
