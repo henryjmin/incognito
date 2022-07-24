@@ -2,10 +2,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-
-bool fileExists(const char* path)
+bool fileExists(const char *path)
 {
-	FILE* f = fopen(path, "rb");
+	FILE *f = fopen(path, "rb");
 	if (f)
 	{
 		fclose(f);
@@ -16,7 +15,7 @@ bool fileExists(const char* path)
 
 Incognito::Incognito()
 {
-	if (fsOpenBisStorage(&m_sh, FsBisStorageId_CalibrationBinary))
+	if (fsOpenBisStorage(&m_sh, FsBisPartitionId_CalibrationBinary))
 	{
 		printf("error: failed to open cal0 partition.\n");
 		m_open = false;
@@ -47,7 +46,7 @@ bool Incognito::isOpen()
 	return m_open;
 }
 
-char* Incognito::backupFileName()
+char *Incognito::backupFileName()
 {
 	static char filename[32] = "sdmc:/backup/prodinfo.bin";
 
@@ -73,7 +72,7 @@ char* Incognito::backupFileName()
 
 bool Incognito::backup()
 {
-	const char* fileName = backupFileName();
+	const char *fileName = backupFileName();
 
 	if (!fileName)
 	{
@@ -81,7 +80,7 @@ bool Incognito::backup()
 		return false;
 	}
 
-	u8* buffer = new u8[size()];
+	u8 *buffer = new u8[size()];
 
 	if (fsStorageRead(&m_sh, 0x0, buffer, size()))
 	{
@@ -91,7 +90,7 @@ bool Incognito::backup()
 		return false;
 	}
 
-	FILE* f = fopen(fileName, "wb+");
+	FILE *f = fopen(fileName, "wb+");
 
 	if (!f)
 	{
@@ -112,7 +111,7 @@ bool Incognito::backup()
 
 u64 Incognito::size()
 {
-	u64 s = 0;
+	s64 s = 0;
 	fsStorageGetSize(&m_sh, &s);
 	return s;
 }
@@ -140,14 +139,14 @@ bool Incognito::clean()
 	erase(0x3D70, 0x240); // device cert
 	erase(0x3FC0, 0x240); // device key
 
-	writeHash(0x12E0, 0x0AE0, certSize());  // client cert hash
+	writeHash(0x12E0, 0x0AE0, certSize()); // client cert hash
 	writeCal0Hash();
 	return verify();
 }
 
-bool Incognito::import(const char* path)
+bool Incognito::import(const char *path)
 {
-	FILE* f = fopen(path, "rb");
+	FILE *f = fopen(path, "rb");
 
 	if (!f)
 	{
@@ -155,10 +154,10 @@ bool Incognito::import(const char* path)
 		return false;
 	}
 
-	copy(f, 0x0250, 0x18); // serial
-	copy(f, 0x0AD0, 0x04); // client size
+	copy(f, 0x0250, 0x18);	// serial
+	copy(f, 0x0AD0, 0x04);	// client size
 	copy(f, 0x0AE0, 0x800); // client cert
-	copy(f, 0x12E0, 0x20); // client cert hash
+	copy(f, 0x12E0, 0x20);	// client cert hash
 	copy(f, 0x3AE0, 0x130); // private key
 	copy(f, 0x35E1, 0x006); // deviceId
 	copy(f, 0x36E1, 0x006); // deviceId
@@ -172,13 +171,13 @@ bool Incognito::import(const char* path)
 
 bool Incognito::verify()
 {
-	bool r = verifyHash(0x12E0, 0x0AE0, certSize()); // client cert hash
+	bool r = verifyHash(0x12E0, 0x0AE0, certSize());	  // client cert hash
 	r &= verifyHash(0x20, 0x0040, calibrationDataSize()); // calibration hash
 
 	return r;
 }
 
-char* Incognito::serial()
+char *Incognito::serial()
 {
 	static char serialNumber[0x19];
 
@@ -209,7 +208,7 @@ bool Incognito::writeCal0Hash()
 
 bool Incognito::writeHash(const u64 hashOffset, const u64 offset, const u64 sz)
 {
-	u8* buffer = new u8[sz];
+	u8 *buffer = new u8[sz];
 
 	if (fsStorageRead(&m_sh, offset, buffer, sz))
 	{
@@ -231,7 +230,7 @@ bool Incognito::writeHash(const u64 hashOffset, const u64 offset, const u64 sz)
 	return true;
 }
 
-void Incognito::print(const u8* buffer, const u64 sz) const
+void Incognito::print(const u8 *buffer, const u64 sz) const
 {
 	for (u64 i = 0; i < sz; i++)
 	{
@@ -243,7 +242,7 @@ void Incognito::print(const u8* buffer, const u64 sz) const
 bool Incognito::verifyHash(const u64 hashOffset, const u64 offset, const u64 sz)
 {
 	bool result = false;
-	u8* buffer = new u8[sz];
+	u8 *buffer = new u8[sz];
 
 	if (fsStorageRead(&m_sh, offset, buffer, sz))
 	{
@@ -291,9 +290,9 @@ bool Incognito::erase(const u64 offset, const u64 sz)
 	return true;
 }
 
-bool Incognito::copy(FILE* f, const u64 offset, const u64 sz)
+bool Incognito::copy(FILE *f, const u64 offset, const u64 sz)
 {
-	u8* buffer = new u8[size()];
+	u8 *buffer = new u8[size()];
 
 	fseek(f, offset, 0);
 
@@ -309,4 +308,3 @@ bool Incognito::copy(FILE* f, const u64 offset, const u64 sz)
 
 	return true;
 }
-
